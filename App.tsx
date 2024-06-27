@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
@@ -15,6 +8,7 @@ import {
   Text,
   useColorScheme,
   View,
+  TouchableOpacity,
 } from 'react-native';
 
 import {
@@ -24,12 +18,12 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-
+ 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function Section({children, title}: SectionProps): React.JSX.Element {
+function TextWidget({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -54,6 +48,62 @@ function Section({children, title}: SectionProps): React.JSX.Element {
     </View>
   );
 }
+const AppBar = ({ isDarkMode }: { isDarkMode: boolean }) => (
+  <View style={[styles.appBar, { backgroundColor: isDarkMode ? '#0A4B78' : '#FFFFFF' }]}>
+    <Text style={styles.appBarTitle}>Your App Title</Text>
+     
+  </View>
+);
+
+
+export type HelloProps = {
+  name: string;
+  baseEnthusiasmLevel?: number;
+};
+// code button Hello
+const Hello: React.FC<HelloProps> = ({name, baseEnthusiasmLevel = 0}) => {
+  const [enthusiasmLevel, setEnthusiasmLevel] =
+    React.useState(baseEnthusiasmLevel);
+
+  const onIncrement = () => setEnthusiasmLevel(enthusiasmLevel + 1);
+  const onDecrement = () =>
+    setEnthusiasmLevel(enthusiasmLevel > 0 ? enthusiasmLevel - 1 : 0);
+
+  const getExclamationMarks = (numChars: number) =>
+    numChars > 0 ? Array(numChars + 1).join('!') : '';
+
+  const enthusiasmText = `${name}${getExclamationMarks(enthusiasmLevel)}`;
+
+  return (
+    <View style={styles.container}>
+      <Text>Index {enthusiasmLevel}</Text>
+      <View style={styles.buttonContainer}>
+        <CustomButton title="-" onPress={onIncrement} backgroundColor="blue" />
+        <CustomButton title="+" onPress={onDecrement} backgroundColor="red" />
+      </View>
+    </View>
+  );
+};
+
+export type CustomButtonProps = {
+  title: string;
+  onPress: () => void;
+  backgroundColor: string;
+};
+
+const CustomButton: React.FC<CustomButtonProps> = ({
+  title,
+  onPress,
+  backgroundColor,
+}) => (
+  <TouchableOpacity
+    style={[styles.customButton, {backgroundColor}]}
+    onPress={onPress}>
+    <Text style={styles.buttonText}>{title}</Text>
+  </TouchableOpacity>
+);
+
+// App Code
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -71,25 +121,17 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
+    
+        <AppBar isDarkMode={isDarkMode} />
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
+          <TextWidget title="Step One">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
             screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+          </TextWidget>
+          <Hello name="" baseEnthusiasmLevel={1} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -113,6 +155,49 @@ const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
   },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  greeting: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    margin: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 16,
+  },
+  customButton: {
+    width: '50%',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 16,
+    backgroundColor: '#3b5998',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '900',
+  },
+  appBar: {
+    height: 60, // Adjust height as needed
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: '#0A4B78', // Default dark mode background color
+  },
+  appBarTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#a45050', // Default title text color
+  },
+  
 });
 
 export default App;
